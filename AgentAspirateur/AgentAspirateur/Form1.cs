@@ -18,6 +18,11 @@ namespace AgentAspirateur
 
         List<Panel> listPanels;
 
+        //Bitmap poussiere = new Bitmap(@"..\..\images\poussiere.jpg");
+        //Bitmap bijou = new Bitmap(@"..\..\images\bijou.jpg");
+        //Bitmap propre = new Bitmap(@"..\..\images\propre.jpg");
+        Bitmap robot = new Bitmap(@"..\..\images\robot2.png");
+
         public Form1()
         {
             InitializeComponent();
@@ -30,7 +35,7 @@ namespace AgentAspirateur
             thread.Start();
 
             //Create the agent thread
-            agent = new Agent();
+            agent = new Agent(castle);
             Thread thread2 = new Thread(new ThreadStart(agent.Run));
             thread2.Start();
 
@@ -52,6 +57,7 @@ namespace AgentAspirateur
                 int size = this.flowLayoutPanel1.Width / 11;
                 panel.Size = new System.Drawing.Size(size, size);
                 panel.Location = new System.Drawing.Point(i, 0);
+                panel.BackgroundImageLayout = ImageLayout.Stretch;
                 this.flowLayoutPanel1.Controls.Add(panel);
             }
         }
@@ -61,13 +67,10 @@ namespace AgentAspirateur
             int compteur = 0;
 
             Room[][] rooms = castle.Rooms;
-            for(int i = 0; i < rooms.Length; i++)
+            for(int j = 0; j < rooms.Length; j++)
             {
-                for(int j = 0; j < rooms[i].Length; j++)
+                for(int i = 0; i < rooms[j].Length; i++)
                 {
-                    Console.WriteLine("Room[" + i + "][" + j + "] : Dust="+ rooms[i][j].Dust);
-
-
                     if (rooms[i][j].Dust && rooms[i][j].Jewel)
                     {
                         listPanels[compteur].BackColor = System.Drawing.Color.Red;
@@ -75,20 +78,33 @@ namespace AgentAspirateur
                     else if (rooms[i][j].Dust)
                     {
                         listPanels[compteur].BackColor = System.Drawing.Color.SandyBrown;
+                        //listPanels[compteur].BackgroundImage = poussiere;
                     }
                     else if (rooms[i][j].Jewel)
                     {
                         listPanels[compteur].BackColor = System.Drawing.Color.Yellow;
+                        //listPanels[compteur].BackgroundImage = bijou;
                     }
                     else
                     {
                         listPanels[compteur].BackColor = System.Drawing.Color.DeepSkyBlue;
+                        //listPanels[compteur].BackgroundImage = propre;
                     }
+                    if (agent.PosX == i && agent.PosY == j)
+                    {
+                        //listPanels[compteur].BackColor = Color.Black;
+                        listPanels[compteur].BackgroundImage = robot;
+                    }
+                    else
+                    {
+                        listPanels[compteur].BackgroundImage = null;
+                    }
+                    Console.WriteLine("case [" + i + "]["+j+"]  dust = "+ rooms[i][j].Dust );
                     compteur++;
                 }
             }
 
-            Console.WriteLine("The castle has changed, updating UI");
+            Console.WriteLine("The castle has changed, UI had been updated");
             Invalidate();
         }
     }

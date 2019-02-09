@@ -19,6 +19,12 @@ namespace AgentAspirateur
             Dust = false;
         }
 
+        public Room(Room room)
+        {
+            Jewel = room.Jewel;
+            Dust = room.Dust;
+        }
+
         private void GenerateJewel()
         {
             int probability = RandomInt.GetRandomInt();
