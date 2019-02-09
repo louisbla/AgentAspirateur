@@ -15,12 +15,13 @@ namespace AgentAspirateur
     {
         Castle castle;
         Agent agent;
+        String statutBarText = "StatutBar";
 
         List<Panel> listPanels;
 
-        //Bitmap poussiere = new Bitmap(@"..\..\images\poussiere.jpg");
-        //Bitmap bijou = new Bitmap(@"..\..\images\bijou.jpg");
-        //Bitmap propre = new Bitmap(@"..\..\images\propre.jpg");
+        Bitmap poussiere = new Bitmap(@"..\..\images\poussiere.jpg");
+        Bitmap bijou = new Bitmap(@"..\..\images\bijou.jpg");
+        Bitmap propre = new Bitmap(@"..\..\images\propre.jpg");
         Bitmap robot = new Bitmap(@"..\..\images\robot2.png");
 
         public Form1()
@@ -38,6 +39,9 @@ namespace AgentAspirateur
             agent = new Agent(castle);
             Thread thread2 = new Thread(new ThreadStart(agent.Run));
             thread2.Start();
+            castle.SubscribeToAgent(agent);
+
+            
 
             Invalidate();
         }
@@ -62,6 +66,11 @@ namespace AgentAspirateur
             }
         }
 
+        /// <summary>
+        /// Updates the UI when the castle changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         public void HandleDataChanged(object sender, EventArgs args)
         {
             int compteur = 0;
@@ -92,20 +101,21 @@ namespace AgentAspirateur
                     }
                     if (agent.PosX == i && agent.PosY == j)
                     {
-                        //listPanels[compteur].BackColor = Color.Black;
                         listPanels[compteur].BackgroundImage = robot;
                     }
                     else
                     {
                         listPanels[compteur].BackgroundImage = null;
                     }
-                    Console.WriteLine("case [" + i + "]["+j+"]  dust = "+ rooms[i][j].Dust );
                     compteur++;
                 }
-            }
 
+            }
+            statusStrip1.Items.Clear();
+            statusStrip1.Items.Add("Score du robot : " + castle.ScorePerformence);
             Console.WriteLine("The castle has changed, UI had been updated");
             Invalidate();
         }
+
     }
 }

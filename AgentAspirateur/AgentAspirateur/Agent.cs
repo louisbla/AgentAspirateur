@@ -20,6 +20,13 @@ namespace AgentAspirateur
         public int PosX { get => posX; set => posX = value; }
         public int PosY { get => posY; set => posY = value; }
 
+        public event EventHandler MakeAMove;
+        public event EventHandler DidAspire;
+        public event EventHandler DidGrab;
+        public void InformMove() => MakeAMove?.Invoke(this, EventArgs.Empty);
+        public void InformAspire() => DidAspire?.Invoke(this, EventArgs.Empty);
+        public void InformGrab() => DidGrab?.Invoke(this, EventArgs.Empty);
+
         public Agent(Castle castle)
         {
             sensor = new Sensor(castle);
@@ -61,7 +68,12 @@ namespace AgentAspirateur
 
         private void DoAction(String action)
         {
-            effector.Move(this, action);
+            effector.Aspire(etatInterne.Belief.Rooms[PosX][PosY]);
+            InformAspire();
+
+            //if(effector.Move(this, action)){
+            //    InformMove();
+           // }
         }
     }
 }

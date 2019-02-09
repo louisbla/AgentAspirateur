@@ -8,7 +8,7 @@ namespace AgentAspirateur
 {
     class Castle 
     {
-        public int scorePerformence;
+        public int ScorePerformence { get; set; }
 
         public event EventHandler DataChanged;
 
@@ -16,6 +16,7 @@ namespace AgentAspirateur
 
         public Room[][] Rooms { get; set; }
         private bool gameIsRunning = false;
+        private Agent agent;
 
         public void Run()
         {
@@ -31,7 +32,7 @@ namespace AgentAspirateur
         }
         public Castle(Castle castle)
         {
-            scorePerformence = 0;
+            ScorePerformence = 0;
 
             this.Rooms = new Room[10][];
             for (int i = 0; i < 10; i++)
@@ -44,9 +45,17 @@ namespace AgentAspirateur
             }
         }
 
+        public void SubscribeToAgent(Agent agent)
+        {
+            this.agent = agent;
+            agent.MakeAMove += HandleMakeAMove;
+            agent.DidAspire += HandleDidAspire;
+            agent.DidGrab += HandleDidGrab;
+        }
+
         public Castle()
         {
-            scorePerformence = 0;
+            ScorePerformence = 0;
 
             this.Rooms = new Room[10][];
             for (int i = 0; i < 10; i++)
@@ -59,9 +68,55 @@ namespace AgentAspirateur
             }
         }
 
+        /// <summary>
+        /// Updates the scorePerformence when the robot makes a move
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        public void HandleMakeAMove(object sender, EventArgs args)
+        {
+            ScorePerformence--;
+        }
+        /// <summary>
+        /// Updates the scorePerformence when the robot aspires
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        public void HandleDidAspire(object sender, EventArgs args)
+        {
+            ScorePerformence--;
+            if(Rooms[agent.PosX][agent.PosY].Dust == true)
+            {
+                ScorePerformence += 10;
+            }
+            if (Rooms[agent.PosX][agent.PosY].Jewel == true)
+            {
+                ScorePerformence -= 50;
+            }
+
+            Rooms[agent.PosX][agent.PosY].Dust = false;
+            Rooms[agent.PosX][agent.PosY].Jewel = false;
+
+        }
+        /// <summary>
+        /// Updates the scorePerformence when the robot makes a grab
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        public void HandleDidGrab(object sender, EventArgs args)
+        {
+            ScorePerformence--;
+            if (Rooms[agent.PosX][agent.PosY].Jewel == true)
+            {
+                ScorePerformence += 50;
+            }
+
+            Rooms[agent.PosX][agent.PosY].Jewel = false;
+        }
+
         private void Initialize()
         {
-            scorePerformence = 0;
+            ScorePerformence = 0;
 
             this.Rooms = new Room[10][];
             for (int i = 0; i< 10; i++)
