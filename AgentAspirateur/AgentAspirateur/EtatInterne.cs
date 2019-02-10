@@ -12,7 +12,15 @@ namespace AgentAspirateur
         //Desire
         private Queue<String> intents;
 
+        public Room room { get; set; }
+
         public Castle Belief { get => belief; set => belief = value; }
         public Queue<String> Intents { get => intents; set => intents = value; }
+
+
+        public EtatInterne()
+        {
+            Intents = new Queue<string>();
+        }
     }
 }

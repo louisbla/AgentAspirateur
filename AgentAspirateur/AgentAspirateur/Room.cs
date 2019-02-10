@@ -11,9 +11,13 @@ namespace AgentAspirateur
     {
         public bool Jewel { get; set; }
         public bool Dust { get; set; }
+        public int PosX { get; set; }
+        public int PosY { get; set; }
 
-        public Room()
+        public Room(int i, int j)
         {
+            PosX = i;
+            PosY = j;
             this.Night();
             Jewel = false;
             Dust = false;
@@ -21,6 +25,8 @@ namespace AgentAspirateur
 
         public Room(Room room)
         {
+            PosX = room.PosX;
+            PosY = room.PosY;
             Jewel = room.Jewel;
             Dust = room.Dust;
         }

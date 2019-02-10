@@ -45,9 +45,9 @@ namespace AgentAspirateur
 
                 Castle tempCastle = ObserveEnvironnementWithSensors();
                 UpdateMyState(tempCastle);
-                String action = ChooseAnAction();
+                CreateIntent();
 
-                DoAction(action);
+                DoAction();
             }
         }
 
@@ -59,17 +59,89 @@ namespace AgentAspirateur
         private void UpdateMyState(Castle castle)
         {
             etatInterne.Belief = castle;
+            etatInterne.room = castle.Rooms[posX][PosY];
         }
 
-        private String ChooseAnAction()
+        private void CreateIntent()
         {
+            etatInterne.Intents.Clear();
 
+            String action = "";
 
-            return "bas";
+            Noeud noeud;
+
+            noeud = AStarAlgo(etatInterne);
+
+            if (etatInterne.Belief.Rooms[posX][PosY].Dust)
+            {
+                effector.Aspire(etatInterne.Belief.Rooms[posX][PosY]);
+                InformAspire();
+            }
+            if (etatInterne.Intents.Count == 0)
+            {
+                etatInterne.Intents.Enqueue("bas");
+                etatInterne.Intents.Enqueue("droite");
+                etatInterne.Intents.Enqueue("bas");
+                etatInterne.Intents.Enqueue("droite");
+            }
         }
 
-        private void DoAction(String action)
+        private Noeud AStarAlgo(EtatInterne etat)
         {
+            Noeud depart = new Noeud(etat.room);
+            Noeud arrive = new Noeud(PoussiereLaPlusProche());
+            Noeud actuel = depart;
+            actuel.Cost = Distance(depart.room, actuel.room) + Distance(actuel.room, arrive.room);
+
+            while(actuel != arrive)
+            {
+
+            }
+
+            return null;
+        }
+
+        private Room PoussiereLaPlusProche()
+        {
+            List<Room> dirtyRooms = new List<Room>();
+            
+
+            foreach(Room[] rooms in etatInterne.Belief.Rooms)
+            {
+                foreach (Room room in rooms)
+                {
+                    if (room.Dust)
+                    {
+                        dirtyRooms.Add(room);
+                    }
+                }
+            }
+
+            Room closestDirty = dirtyRooms[0];
+            int closestDistance = Distance(etatInterne.room, dirtyRooms[0]);
+            foreach(Room room in dirtyRooms)
+            {
+                int distance = Distance(etatInterne.room, room);
+                if ( distance < closestDistance)
+                {
+                    closestDirty = room;
+                    closestDistance = distance;
+                }
+            }
+
+
+            return closestDirty;
+        }
+
+        private int Distance(Room start, Room end)
+        {
+            return Math.Abs(start.PosX - end.PosY) + Math.Abs(start.PosY - end.PosY);
+        }
+
+        private void DoAction()
+        {
+            String action = etatInterne.Intents.Dequeue();
+
             switch (action)
             {
                 case "grab":
@@ -81,30 +153,23 @@ namespace AgentAspirateur
                     InformAspire();
                     break;
                 case "haut":
-                    effector.Move(this, "haut");
-                    InformMove();
+                    if(effector.Move(this, "haut"))
+                        InformMove();
                     break;
                 case "gauche":
-                    effector.Move(this, "gauche");
-                    InformMove();
+                    if (effector.Move(this, "gauche"))
+                        InformMove();
                     break;
                 case "droite":
-                    effector.Move(this, "droite");
-                    InformMove();
+                    if (effector.Move(this, "droite"))
+                        InformMove();
                     break;
                 case "bas":
-                    effector.Move(this, "bas");
-                    InformMove();
+                    if (effector.Move(this, "bas"))
+                        InformMove();
                     break;
 
             }
-
-            effector.Aspire(etatInterne.Belief.Rooms[PosX][PosY]);
-            InformAspire();
-
-            //if(effector.Move(this, action)){
-            //    InformMove();
-           // }
         }
     }
 }

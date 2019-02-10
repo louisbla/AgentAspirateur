@@ -63,7 +63,7 @@ namespace AgentAspirateur
                 this.Rooms[i] = new Room[10];
                 for (int j = 0; j < 10; j++)
                 {
-                    this.Rooms[i][j] = new Room();
+                    this.Rooms[i][j] = new Room(i, j);
                 }
             }
         }
@@ -124,7 +124,7 @@ namespace AgentAspirateur
                 this.Rooms[i] = new Room[10];
                 for(int j = 0; j<10; j++)
                 {
-                    this.Rooms[i][j] = new Room();
+                    this.Rooms[i][j] = new Room(i,j);
                 }
             }
         }
