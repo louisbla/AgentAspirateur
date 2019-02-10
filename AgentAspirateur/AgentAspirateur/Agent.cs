@@ -63,11 +63,42 @@ namespace AgentAspirateur
 
         private String ChooseAnAction()
         {
-            return "droite";
+
+
+            return "bas";
         }
 
         private void DoAction(String action)
         {
+            switch (action)
+            {
+                case "grab":
+                    effector.Grab(etatInterne.Belief.Rooms[PosX][PosY]);
+                    InformGrab();
+                    break;
+                case "aspire":
+                    effector.Aspire(etatInterne.Belief.Rooms[PosX][PosY]);
+                    InformAspire();
+                    break;
+                case "haut":
+                    effector.Move(this, "haut");
+                    InformMove();
+                    break;
+                case "gauche":
+                    effector.Move(this, "gauche");
+                    InformMove();
+                    break;
+                case "droite":
+                    effector.Move(this, "droite");
+                    InformMove();
+                    break;
+                case "bas":
+                    effector.Move(this, "bas");
+                    InformMove();
+                    break;
+
+            }
+
             effector.Aspire(etatInterne.Belief.Rooms[PosX][PosY]);
             InformAspire();
 
